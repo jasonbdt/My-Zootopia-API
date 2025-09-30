@@ -2,6 +2,11 @@ from typing import Any
 import json
 import sys
 
+from animals_api import *
+
+
+OUTPUT_HTML = "animals.html"
+
 
 def load_data(file_path: str) -> Any | str | None:
     """
@@ -157,32 +162,39 @@ def main() -> None:
     Returns:
         None
     """
-    animals_data = load_data('animals_data.json')
+    user_input = input("Enter a name of an animal: ")
+    animals_data = get_animal(user_input)
     html_content = load_data('animals_template.html')
+    replace_content = ""
 
-    skin_types = sorted(get_unique_skin_types(animals_data))
-    print(f"Available skin types: {", ".join(skin_types)}\n")
+    if animals_data:
+        skin_types = sorted(get_unique_skin_types(animals_data))
+        print(f"Available skin types: {", ".join(skin_types)}\n")
 
-    user_choice = get_valid_filter(
-        "Please choose a skin type (leave blank for no filter):",
-        skin_types
-    )
+        user_choice = get_valid_filter(
+            "Please choose a skin type (leave blank for no filter):",
+            skin_types
+        )
 
-    filtered_animals = filter(
-        lambda animal_obj: filter_by_skin_type(animal_obj, user_choice),
-        animals_data
-    )
+        filtered_animals = filter(
+            lambda animal_obj: filter_by_skin_type(animal_obj, user_choice),
+            animals_data
+        )
 
-    output = ""
-    for animal_obj in filtered_animals:
-        serialized = serialize_animal(animal_obj)
-        if serialized:
-            output += serialized
+        for animal_obj in filtered_animals:
+            serialized = serialize_animal(animal_obj)
+            if serialized:
+                replace_content += serialized
+    else:
+        replace_content += '<h2>'\
+                           f'The animal "{user_input}" doesn\'t exist.'\
+                           '</h2>'
 
     if html_content:
-        html_content = html_content.replace('__REPLACE_ANIMALS_INFO__', output)
-        with open('animals.html', 'w') as file_obj:
+        html_content = html_content.replace('__REPLACE_ANIMALS_INFO__', replace_content)
+        with open(OUTPUT_HTML, 'w') as file_obj:
             file_obj.write(html_content)
+        print("")
 
 
 if __name__ == '__main__':
