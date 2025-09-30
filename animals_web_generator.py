@@ -4,6 +4,10 @@ import sys
 
 from animals_api import *
 
+
+OUTPUT_HTML = "animals.html"
+
+
 def load_data(file_path: str) -> Any | str | None:
     """
     Load a text or JSON file.
@@ -158,32 +162,38 @@ def main() -> None:
     Returns:
         None
     """
-    animals_data = get_animal("Fox")
-    html_content = load_data('animals_template.html')
+    user_input = input("Enter a name of an animal: ")
+    animals_data = get_animal(user_input)
 
-    skin_types = sorted(get_unique_skin_types(animals_data))
-    print(f"Available skin types: {", ".join(skin_types)}\n")
+    if animals_data:
+        html_content = load_data('animals_template.html')
 
-    user_choice = get_valid_filter(
-        "Please choose a skin type (leave blank for no filter):",
-        skin_types
-    )
+        skin_types = sorted(get_unique_skin_types(animals_data))
+        print(f"Available skin types: {", ".join(skin_types)}\n")
 
-    filtered_animals = filter(
-        lambda animal_obj: filter_by_skin_type(animal_obj, user_choice),
-        animals_data
-    )
+        user_choice = get_valid_filter(
+            "Please choose a skin type (leave blank for no filter):",
+            skin_types
+        )
 
-    output = ""
-    for animal_obj in filtered_animals:
-        serialized = serialize_animal(animal_obj)
-        if serialized:
-            output += serialized
+        filtered_animals = filter(
+            lambda animal_obj: filter_by_skin_type(animal_obj, user_choice),
+            animals_data
+        )
 
-    if html_content:
-        html_content = html_content.replace('__REPLACE_ANIMALS_INFO__', output)
-        with open('animals.html', 'w') as file_obj:
-            file_obj.write(html_content)
+        output = ""
+        for animal_obj in filtered_animals:
+            serialized = serialize_animal(animal_obj)
+            if serialized:
+                output += serialized
+
+        if html_content:
+            html_content = html_content.replace('__REPLACE_ANIMALS_INFO__', output)
+            with open(OUTPUT_HTML, 'w') as file_obj:
+                file_obj.write(html_content)
+            print("")
+    else:
+        print(f"We found no animals with the name '{user_input.strip()}'")
 
 
 if __name__ == '__main__':
