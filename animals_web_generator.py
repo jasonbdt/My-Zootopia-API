@@ -164,10 +164,10 @@ def main() -> None:
     """
     user_input = input("Enter a name of an animal: ")
     animals_data = get_animal(user_input)
+    html_content = load_data('animals_template.html')
+    replace_content = ""
 
     if animals_data:
-        html_content = load_data('animals_template.html')
-
         skin_types = sorted(get_unique_skin_types(animals_data))
         print(f"Available skin types: {", ".join(skin_types)}\n")
 
@@ -181,19 +181,20 @@ def main() -> None:
             animals_data
         )
 
-        output = ""
         for animal_obj in filtered_animals:
             serialized = serialize_animal(animal_obj)
             if serialized:
-                output += serialized
-
-        if html_content:
-            html_content = html_content.replace('__REPLACE_ANIMALS_INFO__', output)
-            with open(OUTPUT_HTML, 'w') as file_obj:
-                file_obj.write(html_content)
-            print("")
+                replace_content += serialized
     else:
-        print(f"We found no animals with the name '{user_input.strip()}'")
+        replace_content += '<h2>'\
+                           f'The animal "{user_input}" doesn\'t exist.'\
+                           '</h2>'
+
+    if html_content:
+        html_content = html_content.replace('__REPLACE_ANIMALS_INFO__', replace_content)
+        with open(OUTPUT_HTML, 'w') as file_obj:
+            file_obj.write(html_content)
+        print("")
 
 
 if __name__ == '__main__':
