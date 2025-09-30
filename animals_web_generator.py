@@ -2,6 +2,7 @@ from typing import Any
 import json
 import sys
 
+from animals_api import *
 
 def load_data(file_path: str) -> Any | str | None:
     """
@@ -159,6 +160,8 @@ def main() -> None:
     """
     animals_data = load_data('animals_data.json')
     html_content = load_data('animals_template.html')
+
+    get_animal("Lion")
 
     skin_types = sorted(get_unique_skin_types(animals_data))
     print(f"Available skin types: {", ".join(skin_types)}\n")
