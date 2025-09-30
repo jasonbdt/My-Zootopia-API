@@ -158,10 +158,8 @@ def main() -> None:
     Returns:
         None
     """
-    animals_data = load_data('animals_data.json')
+    animals_data = get_animal("Fox")
     html_content = load_data('animals_template.html')
-
-    get_animal("Lion")
 
     skin_types = sorted(get_unique_skin_types(animals_data))
     print(f"Available skin types: {", ".join(skin_types)}\n")
