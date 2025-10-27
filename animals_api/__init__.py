@@ -1,3 +1,3 @@
-from animals_api.main import *
+from animals_api.data_fetcher import *
 
 __all__ = ["get_animal"]
