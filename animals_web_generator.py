@@ -163,7 +163,7 @@ def main() -> None:
         None
     """
     user_input = input("Enter a name of an animal: ")
-    animals_data = get_animal(user_input)
+    animals_data = fetch_data(user_input)
     html_content = load_data('animals_template.html')
     replace_content = ""
 
